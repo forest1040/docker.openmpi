@@ -1,35 +1,27 @@
-mpi_head:
+version: "3.5"
+
+services:
+  mpi_head:
     build: .
-    # image: openmpi
-    ports: 
+    ports:
       - "22"
-    links: 
-      - mpi_node
-
-mpi_node:
+    hostname: "mpihead"
+    networks:
+      - "container-link"
+  mpi_node:
     build: .
-    # image: openmpi
+    hostname: "mpinode"
+    networks:
+      - "container-link"
 
-
-# version: "2"
-
-# services:
-#   mpi_head:
-#     build: .
-#     # image: openmpi
-#     ports: 
-#       - "22"
-#     links: 
-#       - mpi_node
-#     networks:
-#       - net
-
-#   mpi_node:
-#     build: .
-#     # image: openmpi
-#     networks:
-#       - net
-
-# networks:
-#   net:
-#     driver: bridge
+networks:
+  default:
+    external:
+      name: "bridge"
+  container-link:
+    name: "docker.internal"
+    driver: "bridge"
+    ipam:
+      driver: "default"
+      config:
+        - subnet: "172.30.100.0/24"
