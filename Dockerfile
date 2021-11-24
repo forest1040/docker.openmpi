@@ -1,7 +1,7 @@
 # Build this image:  docker build -t mpi .
 #
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 # FROM phusion/baseimage
 
 MAINTAINER Ole Weidner <ole.weidner@ed.ac.uk>
@@ -15,13 +15,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends sudo apt-utils && \
     apt-get install -y --no-install-recommends openssh-server \
-        python-dev python-numpy python-pip python-virtualenv python-scipy \
+        python3-dev python3-numpy python3-pip python3-virtualenv python3-scipy \
         gcc gfortran libopenmpi-dev openmpi-bin openmpi-common openmpi-doc binutils && \
     apt-get clean && apt-get purge && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir /var/run/sshd
 RUN echo 'root:${USER}' | chpasswd
-RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
